@@ -1,10 +1,11 @@
 const express = require("express");
 const User = require("../models/user");
 const passport = require("passport");
+const authenticate = require("../authenticate");
 
 const router = express.Router();
 
-/* GET users listing. */
+// get user listings
 router.get("/", function (req, res, next) {
     res.send("respond with a resource");
 });
@@ -19,7 +20,7 @@ router.post("/signup", (req, res) => {
                 res.setHeader("Content-Type", "application/json");
                 res.json({ err: err });
             } else {
-                passport.authenticate("local")(req, res, () => {
+                passport.authenticate("local")(req, res, () => {    // note: IIFE as return func from authenticate()
                     res.statusCode = 200;
                     res.setHeader("Content-Type", "application/json");
                     res.json({
@@ -33,9 +34,10 @@ router.post("/signup", (req, res) => {
 });
 
 router.post("/login", passport.authenticate("local"), (req, res) => {
+    const token = authenticate.getToken({_id: req.user._id});
     res.statusCode = 200;
     res.setHeader("Content-Type", "application/json");
-    res.json({ success: true, status: "You are successfully logged in!" });
+    res.json({ success: true, token: token, status: "You are successfully logged in!" }); // note: token sent in header
 });
 
 router.get("/logout", (req, res, next) => {
