@@ -11,10 +11,10 @@ router.get(
     [authenticate.verifyUser, authenticate.verifyAdmin],
     function (req, res, next) {
         User.find()
-            .then((promotions) => {
+            .then((users) => {
                 res.statusCode = 200;
                 res.setHeader("Content-Type", "application/json");
-                res.json(promotions);
+                res.json(users);
             })
             .catch((err) => next(err));
     }
